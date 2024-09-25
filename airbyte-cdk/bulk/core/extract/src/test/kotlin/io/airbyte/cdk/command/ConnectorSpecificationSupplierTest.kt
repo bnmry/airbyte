@@ -14,9 +14,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 @MicronautTest(rebuildContext = true)
-class ConfigurationJsonObjectSupplierTest {
-    @Inject
-    lateinit var supplier: ConfigurationJsonObjectSupplier<FakeSourceConfigurationJsonObject>
+class ConnectorSpecificationSupplierTest {
+    @Inject lateinit var supplier: ConnectorSpecificationSupplier<FakeSourceConfigurationJsonObject>
 
     @Test
     fun testSchema() {

@@ -17,13 +17,12 @@ import io.airbyte.protocol.models.v0.AirbyteConnectionStatus
 import io.airbyte.protocol.models.v0.AirbyteMessage
 import io.airbyte.protocol.models.v0.AirbyteStateMessage
 import io.airbyte.protocol.models.v0.ConfiguredAirbyteCatalog
-import io.airbyte.protocol.models.v0.ConnectorSpecification
 import java.sql.Connection
 import java.util.function.Supplier
 import org.junit.jupiter.api.Assertions
 
 data object SyncsTestFixture {
-    fun testSpec(expectedSpec: ConnectorSpecification) {
+    fun testSpec(expectedSpec: io.airbyte.protocol.models.v0.ConnectorSpecification) {
         val expected: String = Jsons.writeValueAsString(expectedSpec)
         val output: BufferingOutputConsumer = CliRunner.source("spec").run()
         val actual: String = Jsons.writeValueAsString(output.specs().last())
@@ -42,14 +41,16 @@ data object SyncsTestFixture {
         testSpec(specFromResource(expectedSpecResource))
     }
 
-    fun specFromResource(specResource: String): ConnectorSpecification =
+    fun specFromResource(
+        specResource: String
+    ): io.airbyte.protocol.models.v0.ConnectorSpecification =
         Jsons.readValue(
             ResourceUtils.readResource(specResource),
-            ConnectorSpecification::class.java,
+            io.airbyte.protocol.models.v0.ConnectorSpecification::class.java,
         )
 
     fun testCheck(
-        configPojo: ConfigurationJsonObjectBase,
+        configPojo: ConnectorSpecification,
         expectedFailure: String? = null,
     ) {
         val checkOutput: BufferingOutputConsumer = CliRunner.source("check", configPojo).run()
@@ -70,7 +71,7 @@ data object SyncsTestFixture {
     }
 
     fun testDiscover(
-        configPojo: ConfigurationJsonObjectBase,
+        configPojo: ConnectorSpecification,
         expectedCatalog: AirbyteCatalog,
     ) {
         val discoverOutput: BufferingOutputConsumer = CliRunner.source("discover", configPojo).run()
@@ -78,7 +79,7 @@ data object SyncsTestFixture {
     }
 
     fun testDiscover(
-        configPojo: ConfigurationJsonObjectBase,
+        configPojo: ConnectorSpecification,
         expectedCatalogResource: String,
     ) {
         testDiscover(configPojo, catalogFromResource(expectedCatalogResource))
@@ -90,7 +91,7 @@ data object SyncsTestFixture {
             AirbyteCatalog::class.java,
         )
 
-    fun <T : ConfigurationJsonObjectBase> testReads(
+    fun <T : ConnectorSpecification> testReads(
         configPojo: T,
         connectionSupplier: Supplier<Connection>,
         prelude: (Connection) -> Unit,
@@ -109,7 +110,7 @@ data object SyncsTestFixture {
         }
     }
 
-    fun <T : ConfigurationJsonObjectBase> testReads(
+    fun <T : ConnectorSpecification> testReads(
         configPojo: T,
         connectionSupplier: Supplier<Connection>,
         prelude: (Connection) -> Unit,
@@ -127,7 +128,7 @@ data object SyncsTestFixture {
         )
     }
 
-    fun <T : ConfigurationJsonObjectBase> testSyncs(
+    fun <T : ConnectorSpecification> testSyncs(
         configPojo: T,
         connectionSupplier: Supplier<Connection>,
         prelude: (Connection) -> Unit,
@@ -148,7 +149,7 @@ data object SyncsTestFixture {
         }
     }
 
-    fun <T : ConfigurationJsonObjectBase> testSyncs(
+    fun <T : ConnectorSpecification> testSyncs(
         configPojo: T,
         connectionSupplier: Supplier<Connection>,
         prelude: (Connection) -> Unit,
